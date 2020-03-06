@@ -1,0 +1,216 @@
+Sistema Clinica Veterinaria
+
+<a href="" onclick="editProducto(<?php echo $id_producto; ?>);" class="btn btn-secondary btn-circle"><i class="fas fa-edit"></i></a>
+
+base_url:
+http://localhost/veterinaria/
+
+url para recursos bootstrap:
+href="http://localhost/veterinaria/assets/
+url para acceder a controladores:
+http://localhost/veterinaria/index.php/
+
+------------------------------------
+tareas:
+1.-Hacer el ingreso/registro del usuario
+2.-crud de productos
+
+Resolver:
+1.- Acceso login no funciona con ajax
+2.- En vista reg_usuario no muestra el primer option en select cargo
+	-Era problema del padding ya que los estilos estaban con medida .rem
+3.- Problemas con las tablas..no reconocian funsiones ajax
+	-El problema estaba en <tfoot>, no puede haber colspan="x"
+4.- No enviaba por ajax los valores de inputs al controlador
+	-el problema era porque en la funsion ajax estaba: contentType: false, processData: false,
+5.- En el controlador no recuperaba los datos enviados por ajax cuando se usaba: contentType: false y processData: false
+	-es porque en el script no se deben recuperar los valores por .val() ni enviar por arreglo ya que al usar FormData[0] envias todo el formularia y en el controlador ya lo puedes recuperar normalmente con POST
+6.- Al enviar los datos me daba el siguiente error:
+Uncaught TypeError: Failed to construct 'FormData': parameter 1 is not of type 'HTMLFormElement'.
+	-es porque el formulario tenia el mismo id que el modal que lo contenia
+***Reglas al trabajar con formData:
+	Dado que lo que hace es enviar todo el formulario como si fuera el metodo submit, entonces los input deben
+	de tener tambien la propiedad name con el fin de que el controlador pueda recuerarlos con POST
+		En resumen:
+		1.- el id del formulario debe ser distinto que el id del modal que lo contiene
+		2.- el formulario debe tener la propiedad name
+		3.- en el script js no recuperar sus valores con val()
+		4.- en el formulario debe tener la propiedad enctype="multipart/form-data"
+7.- Al intentar registrar me daba el siguiente error:
+jquery.min.js:2 POST http://localhost/veterinaria/index.php/Cproducto/registrar_producto 500 (Internal Server Error) jquery.min.js:2
+	-es porque los nombres de las claves en el controlador no eran los mismos que de los campos de la db, y el modelo no lo reconocia en la consulta
+***Reglas para comprobar la ruta de los datos js -> controlador -> modelo
+	1.- Hacer un print_r(datos) en el controlador y modelo, en js se podran visualizar los resultados con un console.log
+    2.- No olvidarse de escribir bien la ruta de la vista.
+8.- Al hacer click en boton de edicion  la pagina se recargaba automaticamente
+    -el problema es porque a usar bootstrap...no funciona en este caso el elemento <a>, se uso <button>
+9.- No se puede enviar parametros en data de la funcion ajax
+
+
+Usuario (ok)
+
+ID_usuario integer 11
+alias varchar (200)
+email  varchar (200)
+password  varchar (200)
+ID_cargo integer 11
+fecha date (pendiente)
+hora time
+
+Cargo (ok)
+
+ID_cargo integer 11
+cargo  varchar (100)
+ID_permisos integer 11
+
+Permisos (ok)
+
+ID_permisos integer 11
+permiso  varchar (200)
+
+Producto(ok)
+
+ID_producto  integer 11
+producto  varchar (200)
+portada   varchar (200)
+cantidad integer 11
+descripcion text
+precio_venta double
+precio_compra double
+ID_usuario integer 11
+fecha data
+hora time
+
+Proveedor(ok)
+
+ID_proveedor
+nit_ci
+nombre_prov
+direccion_prov
+telefono_prov
+
+Compra
+
+ID_compra  integer 11
+codigo_compra varchar (200)
+ID_proveedor integer 11
+total double
+pago double
+cambio double
+ID_usuario integer 11
+fecha data
+hora time
+
+Detalle Compra
+
+ID_detalle_compra integer 11
+cod_compra varchar (200)
+ID_compra  integer 11
+ID_producto  integer 11
+cantidad  integer 11
+precio_compra  double
+precio_venta  double
+
+Venta
+
+ID_venta integer 11 
+codigo_venta
+ID_cliente integer 11
+total double
+pago double
+cambio double
+ID_usuario integer 11
+fecha data
+hora time
+
+Detalle Venta
+
+ID_detalle_venta integer 11
+codigo_venta varchar (200)
+ID_venta integer 11
+ID_producto integer 11
+cantidad integer 11 
+precio_venta double
+
+Servicio
+
+ID_servicio integer 11
+servicio varchar (200)
+costo double
+
+Especialidad
+ID_especialidad integer 11
+especialidad varchar (200)
+
+Doctor
+
+ID_doctor integer 11
+nombres varchar (200)
+apellidos varchar (200) 
+ID_especialidad integer
+ci_nit integer 11 
+celular integer 11
+email varchar (200)
+direccion text
+
+Cliente
+
+ID_cliente integer 11
+nombres varchar (200)
+apellidos varchar (200)
+direccion text
+celular integer 8
+ci_nit integer 10
+
+
+Atencion y Designacion
+
+ID_atencion_designacion integer 11
+ID_doctor integer 11
+ID_cita integer 11
+ID_cliente integer 11
+descripcion text
+total double
+pago double
+cambio double
+ID_usuario integer 11
+fecha data
+hora time
+
+Diagnostico 
+
+ID_diagnostico integer 11
+ID_atencion_designacion integer 11
+ID_doctor integer 11
+ID_cita integer 11
+ID_cliente integer 11
+diagnostico text
+fecha data
+hora time
+
+
+Receta
+
+ID_receta integer 11 
+ID_diagnostico integer 11
+descripcion_receta text
+fecha data
+hora time
+
+
+
+Cita
+
+ID_cita integer 11
+cita varchar (200)
+------------------------
+Reportes 
+
+Reporte de Proveedores 
+Reporte de stock de productos 
+Reporte compras de productos
+Reporte de ventas por fecha segun producto
+Reporte de atencion y designacion
+Reporte de diganosticos y recetas
+Reporte de recetas por cliente
+Reporte de productos mas vendido y menos vendido
